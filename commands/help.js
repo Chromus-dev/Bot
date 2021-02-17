@@ -12,7 +12,7 @@ module.exports = {
 
 		for (const file of commandFiles) {
 			const command = require(`../commands/${file}`);
-			if (command.name && command.description && command.usage && command.name != 'template') {
+			if (command.name && command.description && command.usage && command.name != 'rr') {
 				cmdList.push(command.name);
 				cmdList.push(command.description);
 				cmdList.push(prefix + command.usage);
@@ -25,7 +25,7 @@ module.exports = {
 			.setColor(color)
 			.setTitle(`Commands`)
 			.setFooter('<required> [optional]')
-			.setThumbnail('../HarvestClientTitle.png');
+			.setImage('https://raw.githubusercontent.com/Chromus-dev/Bot/master/HarvestClientTitle.png');
 
 		for (var i = 0; i < cmdList.length; i = i + 3) {
 			responseEmbed.addFields({ name: cmdList[i], value: `${cmdList[i + 1]} \n ${cmdList[i + 2]}` });

@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
 require('dotenv').config();
-const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
+const client = new Discord.Client({
+	ws: { intents: Discord.Intents.ALL },
+	partials: [ 'MESSAGE', 'CHANNEL', 'REACTION' ]
+});
 const keepAlive = require('./server');
 const { welcomeChannel } = require('./config.json');
 

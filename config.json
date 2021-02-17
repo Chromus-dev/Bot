@@ -2,5 +2,29 @@
 	"prefix": "!",
 	"color": "#F5A623",
 	"welcomeChannel": "790242766683635735",
-	"adminID": "790243289701941280"
+	"adminID": "790243289701941280",
+	"reactionRoles": {
+		"channel": "790246633417736232",
+		"comment3": "channel id should be correct",
+		"title": "Select Your Roles!",
+		"description": "This will help customize your profile.\n",
+		"roleDescription": "for",
+		"comment1": "Before the roleDescription would be the role emoji",
+		"comment2": "After the roleDescription would be the role name",
+		"comment4": "Roles and ids need changing",
+		"comment5": "One the last one, there cannot be a comma (,)",
+		"roles": [
+			{
+				"name": "bloo",
+				"id": "811353341455630346",
+				"emoji": "🔵"
+			},
+			{
+				"name": "red",
+				"id": "811353294529888256",
+				"emoji": "🩸"
+			}
+		]
+	},
+	"suggsetChannel": "808733537984970773"
 }
