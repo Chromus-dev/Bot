@@ -7,7 +7,7 @@
 		"channel": "790246633417736232",
 		"comment3": "channel id should be correct",
 		"title": "Select Your Roles!",
-		"description": "This will help customize your profile.\n",
+		"description": "Choose when you want to get pinged.\n",
 		"roleDescription": "for",
 		"comment1": "Before the roleDescription would be the role emoji",
 		"comment2": "After the roleDescription would be the role name",
@@ -15,14 +15,9 @@
 		"comment5": "One the last one, there cannot be a comma (,)",
 		"roles": [
 			{
-				"name": "bloo",
-				"id": "811353341455630346",
-				"emoji": "🔵"
-			},
-			{
-				"name": "red",
-				"id": "811353294529888256",
-				"emoji": "🩸"
+				"name": "Announcements",
+				"id": "790243495667433473",
+				"emoji": "📢"
 			}
 		]
 	},

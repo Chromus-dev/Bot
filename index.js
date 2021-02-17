@@ -19,13 +19,17 @@ handlers.forEach((handler) => {
 });
 
 client.once('ready', () => {
-	client.user.setActivity('for !help', { type: 'LISTENING' }); // Status
+	client.user.setActivity('for your commands', { type: 'WATCHING' }); // Status
 });
 
 // Welcome Messages
-client.on('guildMemberAdd', (member) =>
-	client.channels.cache.get(welcomeChannel).send(`<@${member.id}> joined the server. \`${member.guild.memberCount}\``)
-);
+client.on('guildMemberAdd', (member) => {
+	client.channels.cache
+		.get(welcomeChannel)
+		.send(`<@${member.id}> joined the server. \`${member.guild.memberCount}\``);
+	let memberRole = member.guild.roles.cache.find((role) => role.id == '790587027745144881');
+	member.roles.add(memberRole);
+});
 client.on('guildMemberRemove', (member) =>
 	client.channels.cache.get(welcomeChannel).send(`<@${member.id}> left the server. \`${member.guild.memberCount}\``)
 );
