@@ -19,7 +19,7 @@ handlers.forEach((handler) => {
 });
 
 client.once('ready', () => {
-	client.user.setActivity('for !help', { type: 'WATCHING' }); // Status
+	client.user.setActivity('for !help', { type: 'LISTENING' }); // Status
 });
 
 // Welcome Messages
