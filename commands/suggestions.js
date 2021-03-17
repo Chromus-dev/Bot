@@ -1,4 +1,3 @@
-const { User } = require('discord.js');
 const config = require('../config.json');
 
 module.exports = {
@@ -6,11 +5,12 @@ module.exports = {
 	description: 'Suggests an idea',
 	usage: `suggest <idea>`,
 	execute(client, message, args, Discord) {
-		if (!args[0]) return message.reply('You must provide a suggsetion.');
+		if (message.channel.id != '808733537984970773') return;
+		if (!args) return message.reply('You must provide a suggsetion.');
 
 		const channel = message.guild.channels.cache.find((c) => c.id === config.suggsetChannel);
 
-		let idea = args.join(' ');
+		let idea = args.join(' ').replace(/-bug/g, '');
 		const embed = new Discord.MessageEmbed()
 			.setColor(config.color)
 			.setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))

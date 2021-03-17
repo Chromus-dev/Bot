@@ -1,25 +1,19 @@
 {
 	"prefix": "!",
-	"color": "#F5A623",
-	"welcomeChannel": "790242766683635735",
-	"adminID": "790243289701941280",
-	"reactionRoles": {
-		"channel": "790246633417736232",
-		"comment3": "channel id should be correct",
-		"title": "Select Your Roles!",
-		"description": "Choose when you want to get pinged.\n",
-		"roleDescription": "for",
-		"comment1": "Before the roleDescription would be the role emoji",
-		"comment2": "After the roleDescription would be the role name",
-		"comment4": "Roles and ids need changing",
-		"comment5": "One the last one, there cannot be a comma (,)",
-		"roles": [
-			{
-				"name": "Announcements",
-				"id": "790243495667433473",
-				"emoji": "📢"
-			}
-		]
+	"adminID": "811229287184859178",
+	"devID": "790243247988539432",
+	"roleChannelID": "790246633417736232",
+	"suggsetChannel": "808733537984970773",
+	"colors": {
+		"yellow": "#F5A623",
+		"blue": "#1A95B1",
+		"green": "#16D738",
+		"red": "#DC2A14"
 	},
-	"suggsetChannel": "808733537984970773"
+	"welcomeEmbeds": {
+		"welcomeMessages": [ "has appeared!", "has arrived!", "has joined!", "has showed up!", "has joined us!" ],
+		"leaveMessages": [ "Good bye" ],
+		"waveImg": "https://github.com/twitter/twemoji/blob/master/assets/72x72/1f44b.png?raw=true",
+		"channel": "790242766683635735"
+	}
 }

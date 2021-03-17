@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { prefix, color } = require('../config.json');
+const config = require('../config.json');
 
 const commandFiles = fs.readdirSync('./commands/').filter((file) => file.endsWith('.js'));
 
@@ -12,17 +12,23 @@ module.exports = {
 
 		for (const file of commandFiles) {
 			const command = require(`../commands/${file}`);
-			if (command.name && command.description && command.usage && command.name != 'rr') {
+			if (
+				command.name &&
+				command.description &&
+				command.usage &&
+				command.name != 'sendrr' &&
+				command.name != 'updaterr'
+			) {
 				cmdList.push(command.name);
 				cmdList.push(command.description);
-				cmdList.push(prefix + command.usage);
+				cmdList.push(config.prefix + command.usage);
 			} else {
 				continue;
 			}
 		}
 
 		var responseEmbed = new Discord.MessageEmbed()
-			.setColor(color)
+			.setColor(config.colors.blue)
 			.setTitle(`Commands`)
 			.setFooter('<required> [optional]')
 			.setImage('https://raw.githubusercontent.com/Chromus-dev/Bot/master/HarvestClientTitle.png');
