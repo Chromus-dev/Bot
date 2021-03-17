@@ -124,7 +124,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
 			repo = 'Harvester';
 			owner = 'Harvest-Client-Team';
 			assignee = 'Chromus-dev';
-			labels = oldEmbed.bug ? [ 'bug' ] : [];
+			// labels = oldEmbed.bug ? [ 'bug' ] : [];
+			labels = [];
 
 			const issueRequestArgs = {
 				owner: owner,
