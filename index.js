@@ -6,6 +6,9 @@ const client = new Discord.Client({
 });
 const keepAlive = require('./server');
 const config = require('./config.json');
+const { statusMessages } = require('./events/guild/message');
+const { Octokit } = require('@octokit/core');
+const octokit_bot = new Octokit({ auth: process.env.GHTOKEN });
 
 module.exports.client = client;
 
@@ -63,40 +66,120 @@ client.on('messageReactionAdd', async (reaction, user) => {
 	if (!reaction.message.guild) return;
 
 	if (reaction.message.channel.id == config.roleChannelID) {
-		client.channels.cache.get(roleDataChannelID).messages.fetch({ limit: 1 }).then(async (messages) => {
-			const reactionsConfig = require('./roles.json');
-			let availableReactions = [];
-			for (i in reactionsConfig) {
-				availableReactions.push(reactionsConfig[i].emoji);
+		const reactionsConfig = require('./roles.json');
+		let availableReactions = [];
+		for (i in reactionsConfig) {
+			availableReactions.push(reactionsConfig[i].emoji);
+		}
+		if (availableReactions.includes(reaction.emoji.name)) {
+			await reaction.message.guild.members.cache
+				.get(user.id)
+				.roles.add(reactionsConfig[availableReactions.indexOf(reaction.emoji.name)].role);
+		}
+		// suggestion system
+	} else if (reaction.message.channel.id == config.suggsetChannel && !user.bot) {
+		let message = reaction.message;
+		const channelId = message.channel.id;
+
+		var newStatus;
+
+		if (reaction.emoji.name == 'check') {
+			// accepted
+			newStatus = statusMessages.ACCEPTED;
+		} else if (reaction.emoji.name == '❌') {
+			// denied
+			newStatus = statusMessages.DENIED;
+		} else return;
+
+		const oldEmbed = message.embeds[0];
+		const newEmbed = new Discord.MessageEmbed()
+			.setAuthor(oldEmbed.author.name, oldEmbed.author.iconURL)
+			.setDescription(oldEmbed.description)
+			.setColor(newStatus.color)
+			.addField('Status', newStatus.text)
+			.setFooter(oldEmbed.footer.text, oldEmbed.footer.iconURL);
+
+		// if embed has bot icon in footer
+		// gh auto issue
+		if (
+			oldEmbed.footer.iconURL ==
+				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png' &&
+			newStatus == statusMessages.ACCEPTED
+		) {
+			let body = newEmbed.description;
+			body = body.concat(
+				`\n\n> This issue was created by an automation. It was authored in Discord by ${newEmbed.author
+					.name}, in the Harvest Client server.`
+			);
+
+			let title;
+			let titleArr = newEmbed.description.split(/ +/);
+
+			if (titleArr.length >= 5) {
+				title = `${titleArr[0]} ${titleArr[1]} ${titleArr[2]} ${titleArr[3]} ${titleArr[4]}`;
+			} else {
+				title = titleArr.join(' ');
 			}
-			if (
-				reaction.message.channel.id == config.roleChannelID &&
-				availableReactions.includes(reaction.emoji.name)
-			) {
-				await reaction.message.guild.members.cache
-					.get(user.id)
-					.roles.add(reactionsConfig[availableReactions.indexOf(reaction.emoji.name)].role);
+
+			repo = 'Harvester';
+			owner = 'Harvest-Client-Team';
+			assignee = 'Chromus-dev';
+			labels = oldEmbed.bug ? [ 'bug' ] : [];
+
+			const issueRequestArgs = {
+				owner: owner,
+				repo: repo,
+				title: title,
+				body: body,
+				assignee: assignee,
+				labels: labels
+			};
+
+			try {
+				result = await octokit_bot.request('POST /repos/{owner}/{repo}/issues', issueRequestArgs);
+				newEmbed.description = `${newEmbed.description} | [[GitHub Issue]](${result.data.html_url})`;
+			} catch (error) {
+				console.error(error);
 			}
-		});
-	} else if (reaction.message.channel.id == config.suggsetChannel) {
+		}
+		// edit message to have new embed
+		message.edit({ embed: newEmbed });
+
+		reaction.remove();
+		message.react(newStatus.emoji);
 	}
 });
 client.on('messageReactionRemove', async (reaction, user) => {
 	if (reaction.message.partial) await reaction.message.fetch();
 	if (reaction.partial) await reaction.fetch();
 	if (!reaction.message.guild) return;
-	client.channels.cache.get(roleDataChannelID).messages.fetch({ limit: 1 }).then(async (messages) => {
+
+	if (reaction.message.channel.id == config.roleChannelID) {
 		const reactionsConfig = require('./roles.json');
 		let availableReactions = [];
 		for (i in reactionsConfig) {
 			availableReactions.push(reactionsConfig[i].emoji);
 		}
-		if (reaction.message.channel.id == config.roleChannelID && availableReactions.includes(reaction.emoji.name)) {
+		if (availableReactions.includes(reaction.emoji.name)) {
 			await reaction.message.guild.members.cache
 				.get(user.id)
 				.roles.remove(reactionsConfig[availableReactions.indexOf(reaction.emoji.name)].role);
 		}
-	});
+		// suggestion system
+	} else if (reaction.message.channel.id == config.suggsetChannel && !user.bot) {
+		let message = reaction.message;
+		const channelId = message.channel.id;
+
+		var newStatus;
+
+		if (reaction.emoji.name == 'check') {
+			// accepted
+			newStatus = statusMessages.ACCEPTED;
+		} else if (reaction.emoji.name == '❌') {
+			// denied
+			newStatus = statusMessages.DENIED;
+		}
+	}
 });
 
 keepAlive();

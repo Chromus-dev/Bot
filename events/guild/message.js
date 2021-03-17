@@ -1,8 +1,25 @@
 const prefix = '!';
-const config = require('../config.json');
+const config = require('../../config.json');
+
+const statusMessages = {
+	WAITING: {
+		text: '📊 Waiting for community feedback, please vote!',
+		color: '#f9b835'
+	},
+	ACCEPTED: {
+		text: '<:check:821638085975867402> Accepted idea! Expect this soon.',
+		color: '#89D071',
+		emoji: '<:check:821638085975867402>'
+	},
+	DENIED: {
+		text: '❌ Thank you for the feedback, but we are not interested in this idea at this time.',
+		color: '#D32F43', // '#ff4133'
+		emoji: '❌'
+	}
+};
 
 module.exports = (Discord, client, message) => {
-	if (message.channel.id != '808733537984970773') {
+	function runCommand() {
 		if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 		const args = message.content.slice(prefix.length).split(/ +/);
@@ -13,25 +30,71 @@ module.exports = (Discord, client, message) => {
 			client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
 		if (command) command.execute(client, message, args, Discord);
+	}
+
+	if (message.channel.id != '808733537984970773') {
+		runCommand();
 	} else {
+		if (message.content.startsWith(prefix) && !message.content.startsWith(`${prefix}suggest`)) return runCommand();
+		if (message.author.bot) return;
+
 		let suggestion = message.content;
 		if (message.content.startsWith(`${prefix}suggest`)) suggestion = message.content.slice(prefix.length + 7);
 		const channel = message.guild.channels.cache.find((c) => c.id === config.suggsetChannel);
 
-		//.replace(/-bug/g, '');
+		let bug = message.content.match(/--?bug|<@&821083058530287646>/) ? true : false;
+		let bot = message.content.match(/--?bot|<@789909103668756491>|<@!789909103668756491>/) ? true : false;
+		suggestion = suggestion.replace(/--?bug|<@&821083058530287646>/, '');
+		suggestion = suggestion.replace(/--?bot|<@789909103668756491>|<@!789909103668756491>/, '');
+
+		let footers = [
+			`Add --bug to the end of your suggestion to label it as a bug.`,
+			`Add --bot to the end of your suggestion to label it as something for the bot.`,
+			`Send a message in this channel to create a suggestion!`,
+			`If you have a suggestion send it in this channel!`,
+			`Have an idea for the client? Send it here!`
+		];
+
+		message.delete(); // delete command message and replace with embed
+
+		const status = statusMessages.WAITING;
+
 		const embed = new Discord.MessageEmbed()
-			.setColor(config.color)
-			.setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
-			.setDescription(suggestion);
-		channel
-			.send(embed)
-			.then((msg) => {
-				msg.react('👍');
-				msg.react('👎');
-				message.delete();
-			})
-			.catch((err) => {
-				message.reply('There was an error suggesting that.');
-			});
+			.setColor(status.color)
+			.setAuthor(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
+			.setDescription(suggestion)
+			.addField('Status', status.text);
+
+		if (message.attachments.size > 0) {
+			message.attachments.map((a) => embed.setImage(a.proxyURL));
+		}
+		if (bot && bug) {
+			embed.setFooter(
+				footers[Math.floor(Math.random())],
+				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png'
+			);
+			embed.bot = true;
+			embed.bug = true;
+		} else if (bot) {
+			embed.setFooter(
+				footers[1],
+				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png'
+			);
+			embed.bot = true;
+		} else if (bug) {
+			embed.setFooter(
+				footers[0],
+				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f41b.png'
+			);
+			embed.bug = true;
+		} else {
+			embed.setFooter(footers[Math.floor(Math.random() * footers.length)]);
+		}
+
+		channel.send(embed).then((msg) => {
+			msg.react('👍').then(() => msg.react('👎'));
+		});
 	}
 };
+
+module.exports.statusMessages = statusMessages;

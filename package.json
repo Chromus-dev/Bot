@@ -19,6 +19,7 @@
 	"homepage": "https://github.com/Chromus-dev/actual-bot#readme",
 	"dependencies": {
 		"@discordjs/opus": "^0.4.0",
+		"@octokit/core": "^3.3.1",
 		"discord.js": "github:discordjs/discord.js#pull/4874/head",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
