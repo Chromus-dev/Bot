@@ -15,6 +15,11 @@ const statusMessages = {
 		text: '❌ Thank you for the feedback, but we are not interested in this idea at this time.',
 		color: '#D32F43', // '#ff4133'
 		emoji: '❌'
+	},
+	ACCEPTEDSPECIAL: {
+		text: '<:check:821638085975867402> Accepted idea! Expect this soon:tm:',
+		color: '#89D071',
+		emoji: '<:check:821638085975867402>'
 	}
 };
 
@@ -63,32 +68,31 @@ module.exports = (Discord, client, message) => {
 			.setColor(status.color)
 			.setAuthor(message.member.displayName, message.author.displayAvatarURL({ dynamic: true }))
 			.setDescription(suggestion)
-			.addField('Status', status.text);
+			.addField('Status', status.text, true);
 
 		if (message.attachments.size > 0) {
 			message.attachments.map((a) => embed.setImage(a.proxyURL));
 		}
 		if (bot && bug) {
 			embed.setFooter(
-				footers[Math.floor(Math.random())],
+				footers[Math.round(Math.random())],
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png'
 			);
-			embed.bot = true;
-			embed.bug = true;
+			embed.addField('Type', 'Bot\nBug', true);
 		} else if (bot) {
 			embed.setFooter(
 				footers[1],
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png'
 			);
-			embed.bot = true;
+			embed.addField('Type', 'Bot', true);
 		} else if (bug) {
 			embed.setFooter(
 				footers[0],
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f41b.png'
 			);
-			embed.bug = true;
+			embed.addField('Type', 'Bug', true);
 		} else {
-			embed.setFooter(footers[Math.floor(Math.random() * footers.length)]);
+			embed.setFooter(footers[Math.round(Math.random() * footers.length)]);
 		}
 
 		channel.send(embed).then((msg) => {

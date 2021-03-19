@@ -8,7 +8,7 @@ const keepAlive = require('./server');
 const config = require('./config.json');
 const { statusMessages } = require('./events/guild/message');
 const { Octokit } = require('@octokit/core');
-const octokit_bot = new Octokit({ auth: process.env.GHTOKEN });
+const octokit_bot = new Octokit({ auth: process.env.CHROMUSGHTOKEN });
 
 module.exports.client = client;
 
@@ -85,7 +85,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 		if (reaction.emoji.name == 'check') {
 			// accepted
-			newStatus = statusMessages.ACCEPTED;
+			newStatus =
+				Math.floor(Math.random() * 30 + 1) == 5 ? statusMessages.ACCEPTEDSPECIAL : statusMessages.ACCEPTED;
 		} else if (reaction.emoji.name == '❌') {
 			// denied
 			newStatus = statusMessages.DENIED;
@@ -99,17 +100,21 @@ client.on('messageReactionAdd', async (reaction, user) => {
 			.addField('Status', newStatus.text)
 			.setFooter(oldEmbed.footer.text, oldEmbed.footer.iconURL);
 
+		if (oldEmbed.image != null) newEmbed.setImage(oldEmbed.image.url);
+
 		// if embed has bot icon in footer
 		// gh auto issue
 		if (
 			oldEmbed.footer.iconURL ==
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png' &&
-			newStatus == statusMessages.ACCEPTED
+			(newStatus == statusMessages.ACCEPTED || newStatus == statusMessages.ACCEPTEDSPECIAL) &&
+			!oldEmbed.description.includes('[GitHub Issue]')
 		) {
 			let body = newEmbed.description;
+			if (oldEmbed.image != null) body = body.concat(`\n\n![](${oldEmbed.image.url})`);
 			body = body.concat(
-				`\n\n> This issue was created by an automation. It was authored in Discord by ${newEmbed.author
-					.name}, in the Harvest Client server.`
+				`\n\n> This issue was created by an automation. It was authored in Discord by ${oldEmbed.author
+					.name} and accepted by ${user.username}, in the Harvest Client server.`
 			);
 
 			let title;
@@ -125,7 +130,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 			owner = 'Harvest-Client-Team';
 			assignee = 'Chromus-dev';
 			// labels = oldEmbed.bug ? [ 'bug' ] : [];
-			labels = [];
+			labels = [ 'bug' ];
 
 			const issueRequestArgs = {
 				owner: owner,
@@ -138,7 +143,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 			try {
 				result = await octokit_bot.request('POST /repos/{owner}/{repo}/issues', issueRequestArgs);
-				newEmbed.description = `${newEmbed.description} | [[GitHub Issue]](${result.data.html_url})`;
+				newEmbed.description = `${newEmbed.description} | [[GitHub Issue](${result.data.html_url})]`;
 			} catch (error) {
 				console.error(error);
 			}
@@ -175,7 +180,7 @@ client.on('messageReactionRemove', async (reaction, user) => {
 
 		if (reaction.emoji.name == 'check') {
 			// accepted
-			newStatus = statusMessages.ACCEPTED;
+			newStatus = Math.floor(Math.random()) == 1 ? statusMessages.ACCEPTEDSPECIAL : statusMessages.ACCEPTED;
 		} else if (reaction.emoji.name == '❌') {
 			// denied
 			newStatus = statusMessages.DENIED;
@@ -185,4 +190,4 @@ client.on('messageReactionRemove', async (reaction, user) => {
 
 keepAlive();
 // Always Last
-client.login(process.env.TOKEN);
+client.login(process.env.BOTTOKEN);
