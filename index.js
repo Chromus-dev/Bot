@@ -1,6 +1,7 @@
 require('dotenv').config();
-
+const { Octokit } = require('@octokit/core');
 const Discord = require('discord.js');
+
 const client = new Discord.Client({
 	ws: { intents: Discord.Intents.ALL },
 	partials: [ 'MESSAGE', 'CHANNEL', 'REACTION' ]
@@ -13,7 +14,6 @@ const keepAlive = require('./server');
 const config = require('./config.json');
 const { statusMessages } = require('./events/guild/message');
 
-const { Octokit } = require('@octokit/core');
 const octokit_chromus = new Octokit({ auth: process.env.CHROMUSGHTOKEN });
 const octokit_bot = new Octokit({ auth: process.env.BOTGHTOKEN });
 module.exports.CHROMUSGHTOKEN = process.env.CHROMUSGHTOKEN;
