@@ -1,19 +1,25 @@
-const Discord = require('discord.js');
 require('dotenv').config();
+
+const Discord = require('discord.js');
 const client = new Discord.Client({
 	ws: { intents: Discord.Intents.ALL },
 	partials: [ 'MESSAGE', 'CHANNEL', 'REACTION' ]
 });
+client.commands = new Discord.Collection();
+client.events = new Discord.Collection();
+module.exports.client = client;
+
 const keepAlive = require('./server');
 const config = require('./config.json');
 const { statusMessages } = require('./events/guild/message');
+
 const { Octokit } = require('@octokit/core');
-const octokit_bot = new Octokit({ auth: process.env.CHROMUSGHTOKEN });
-
-module.exports.client = client;
-
-client.commands = new Discord.Collection();
-client.events = new Discord.Collection();
+const octokit_chromus = new Octokit({ auth: process.env.CHROMUSGHTOKEN });
+const octokit_bot = new Octokit({ auth: process.env.BOTGHTOKEN });
+module.exports.CHROMUSGHTOKEN = process.env.CHROMUSGHTOKEN;
+module.exports.BOTGHTOKEN = process.env.BOTGHTOKEN;
+module.exports.octokit_chromus = octokit_chromus;
+module.exports.octokit_bot = octokit_bot;
 
 const handlers = [ 'commandHandler', 'eventHandler' ];
 
@@ -129,8 +135,8 @@ client.on('messageReactionAdd', async (reaction, user) => {
 			repo = 'Harvester';
 			owner = 'Harvest-Client-Team';
 			assignee = 'Chromus-dev';
-			// labels = oldEmbed.bug ? [ 'bug' ] : [];
-			labels = [ 'bug' ];
+			labels = [];
+			// labels = [ 'bug' ];
 
 			const issueRequestArgs = {
 				owner: owner,
