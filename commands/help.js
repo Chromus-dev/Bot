@@ -28,7 +28,7 @@ module.exports = {
 			.setThumbnail('../HarvestClientTitle.png');
 
 		for (var i = 0; i < cmdList.length; i = i + 3) {
-			responseEmbed.addFields({ name: cmdList[i], value: `${cmdList[i + 1]} \n ${cmdList[i + 2]}` });
+			responseEmbed.addFields({ name: cmdList[i], value: `${cmdList[i + 1]} \n \`${cmdList[i + 2]}\`` });
 		}
 
 		message.channel.send(responseEmbed);
