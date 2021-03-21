@@ -1,5 +1,3 @@
-// Original by Beatso. Modified by Chromus
-
 const scalePixelArt = require('scale-pixel-art');
 const request = require('request').defaults({ encoding: null });
 

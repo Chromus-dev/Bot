@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { prefix, color } = require('../config.json');
+const config = require('../config.json');
 
 const commandFiles = fs.readdirSync('./commands/').filter((file) => file.endsWith('.js'));
 
@@ -12,23 +12,33 @@ module.exports = {
 
 		for (const file of commandFiles) {
 			const command = require(`../commands/${file}`);
-			if (command.name && command.description && command.usage && command.name != 'template') {
+			if (
+				command.name &&
+				command.description &&
+				command.usage &&
+				command.name != 'sendrr' &&
+				command.name != 'updaterr'
+			) {
 				cmdList.push(command.name);
 				cmdList.push(command.description);
-				cmdList.push(prefix + command.usage);
+				cmdList.push(config.prefix + command.usage);
 			} else {
 				continue;
 			}
 		}
 
 		var responseEmbed = new Discord.MessageEmbed()
-			.setColor(color)
+			.setColor(config.colors.blue)
 			.setTitle(`Commands`)
 			.setFooter('<required> [optional]')
-			.setThumbnail('../HarvestClientTitle.png');
+			.setImage('https://raw.githubusercontent.com/Chromus-dev/Bot/master/HarvestClientTitle.png');
 
 		for (var i = 0; i < cmdList.length; i = i + 3) {
-			responseEmbed.addFields({ name: cmdList[i], value: `${cmdList[i + 1]} \n \`${cmdList[i + 2]}\`` });
+			responseEmbed.addFields({
+				name: cmdList[i],
+				value: `${cmdList[i + 1]} \n \`${cmdList[i + 2]}\``,
+				inline: true
+			});
 		}
 
 		message.channel.send(responseEmbed);

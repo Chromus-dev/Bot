@@ -45,7 +45,8 @@ module.exports = {
 					value: member.nickname == null ? 'None' : member.nickname
 				}
 			],
-			color: color
+			color: color,
+			thumbnail: user.avatarURL({ format: 'png', dynamic: 'true' })
 		};
 
 		message.channel.send({ embed: responseEmbed });

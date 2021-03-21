@@ -1,6 +1,21 @@
 {
 	"prefix": "!",
-	"color": "#F5A623",
-	"welcomeChannel": "790242766683635735",
-	"adminID": "790243289701941280"
+	"adminID": "811229287184859178",
+	"devID": "790243247988539432",
+	"roleChannelID": "790246633417736232",
+	"suggsetChannel": "808733537984970773",
+	"colors": {
+		"yellow": "#F5A623",
+		"blue": "#1A95B1",
+		"green": "#16D738",
+		"red": "#DC2A14"
+	},
+	"welcomeEmbeds": {
+		"welcomeMessages": [ "has appeared!", "has arrived!", "has joined!", "has showed up!", "has joined us!" ],
+		"leaveMessages": [ "Good bye" ],
+		"waveImg": "https://github.com/twitter/twemoji/blob/master/assets/72x72/1f44b.png?raw=true",
+		"channel": "790242766683635735"
+	},
+	"comment1": "     chromus                 zorby                vacjan              harvester",
+	"devIDS": [ "511758610720751626", "483922892153815040", "511758610720751626", "789909103668756491" ]
 }

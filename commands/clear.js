@@ -1,4 +1,4 @@
-const { adminID } = require('../config.json');
+const { devID } = require('../config.json');
 
 module.exports = {
 	name: 'clear',
@@ -6,8 +6,7 @@ module.exports = {
 	aliaes: [ 'delete', 'purge' ],
 	usage: `clear <amount>`,
 	async execute(client, message, args, Discord) {
-		if (!message.member.roles.cache.some((role) => role.id == adminID))
-			return message.reply('Only admins can do that!');
+		if (!message.member.roles.cache.some((role) => role.id == devID)) return message.reply("You can't do that!");
 		if (!args[0]) return message.reply('You must specify an amount of messages to clear.');
 		if (isNaN(args[0])) return message.reply('That is not a number!');
 		if (args[0] > 100) return message.reply('You cannot delete more than 100 messages.');
