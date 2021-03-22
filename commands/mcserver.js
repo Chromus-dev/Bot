@@ -40,7 +40,7 @@ module.exports = {
 			})
 			.catch((error) => {
 				message.reply('There was an error finding the server.');
-				throw error;
+				// throw error;
 			});
 	}
 };

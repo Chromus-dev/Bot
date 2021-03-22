@@ -49,12 +49,15 @@ module.exports = (Discord, client, message) => {
 
 		let bug = message.content.match(/--?bug|<@&821083058530287646>/) ? true : false;
 		let bot = message.content.match(/--?bot|<@789909103668756491>|<@!789909103668756491>/) ? true : false;
+		let client = message.content.match(/--?client/) ? true : false;
 		suggestion = suggestion.replace(/--?bug|<@&821083058530287646>/, '');
 		suggestion = suggestion.replace(/--?bot|<@789909103668756491>|<@!789909103668756491>/, '');
+		suggestion = suggestion.replace(/--?client/, '');
 
 		let footers = [
 			`Add --bug to the end of your suggestion to label it as a bug.`,
 			`Add --bot to the end of your suggestion to label it as something for the bot.`,
+			`Add --client to the end of your suggestion to label it as something for the client.`,
 			`Send a message in this channel to create a suggestion!`,
 			`If you have a suggestion send it in this channel!`,
 			`Have an idea for the client? Send it here!`
@@ -79,18 +82,30 @@ module.exports = (Discord, client, message) => {
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png'
 			);
 			embed.addField('Type', 'Bot\nBug', true);
-		} else if (bot) {
+		} else if (bot && !client) {
 			embed.setFooter(
 				footers[1],
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png'
 			);
 			embed.addField('Type', 'Bot', true);
-		} else if (bug) {
+		} else if (bug && !client) {
 			embed.setFooter(
 				footers[0],
 				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f41b.png'
 			);
 			embed.addField('Type', 'Bug', true);
+		} else if (client && !bot && !bug) {
+			embed.setFooter(
+				footers[2],
+				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f5a5.png'
+			);
+			embed.addField('Type', 'Client', true);
+		} else if (client && bug && !bot) {
+			embed.setFooter(
+				footers[Math.floor(Math.random()) == 1 ? 2 : 0],
+				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f5a5.png'
+			);
+			embed.addField('Type', 'Client\nBug', true);
 		} else {
 			embed.setFooter(footers[Math.round(Math.random() * footers.length)]);
 		}

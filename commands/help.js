@@ -36,7 +36,7 @@ module.exports = {
 		for (var i = 0; i < cmdList.length; i = i + 3) {
 			responseEmbed.addFields({
 				name: cmdList[i],
-				value: `${cmdList[i + 1]} \n ${cmdList[i + 2]}`,
+				value: `${cmdList[i + 1]} \n \`${cmdList[i + 2]}\``,
 				inline: true
 			});
 		}

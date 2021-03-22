@@ -21,6 +21,11 @@ module.exports.BOTGHTOKEN = process.env.BOTGHTOKEN;
 module.exports.octokit_chromus = octokit_chromus;
 module.exports.octokit_bot = octokit_bot;
 
+const TRELLOAPPKEY = process.env.TRELLOAPPKEY;
+const TRELLOTOKEN = process.env.TRELLOTOKEN;
+module.exports.TRELLOAPPKEY = TRELLOAPPKEY;
+module.exports.TRELLOTOKEN = TRELLOTOKEN;
+
 const handlers = [ 'commandHandler', 'eventHandler' ];
 
 handlers.forEach((handler) => {
