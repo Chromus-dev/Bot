@@ -1,7 +1,5 @@
 const config = require('../config.json');
-const { TRELLOTOKEN, TRELLOAPPKEY } = require('../index.js');
-const Trello = require('trello');
-var trello = new Trello(TRELLOAPPKEY, TRELLOTOKEN);
+const { TRELLO: trello } = require('../index.js');
 
 const boardID = '5ff1b4272f65d6300b6f2a6e';
 const lists = [

@@ -1,5 +1,6 @@
 const prefix = '!';
 const config = require('../../config.json');
+const fetch = require('node-fetch');
 
 const statusMessages = {
 	WAITING: {
@@ -23,7 +24,7 @@ const statusMessages = {
 	}
 };
 
-module.exports = (Discord, client, message) => {
+module.exports = async (Discord, client, message) => {
 	function runCommand() {
 		if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -36,10 +37,26 @@ module.exports = (Discord, client, message) => {
 
 		if (command) command.execute(client, message, args, Discord);
 	}
+	async function chatBot() {
+		r = await fetch(`https://api.monkedev.com/fun/chat?msg=${encodeURIComponent(message.content)}`)
+			.then((res) => res.json())
+			.then((json) => {
+				return json;
+			});
+		return message.reply(r.response, { allowedMentions: { repliedUser: false } });
+	}
 
-	if (message.channel.id != '808733537984970773') {
-		runCommand();
-	} else {
+	if (message.author.bot) return;
+	const isDev = config.devIDS.includes(message.author.id);
+
+	if (message.channel.id == config.chatBotChannel && isDev && message.content.startsWith(prefix)) return runCommand();
+
+	if (message.content.startsWith(prefix || '>' || '!d') && message.channel.id == config.chatBotChannel && !isDev)
+		return message.delete().then(message.author.send(`You can't use commands in <#${config.chatBotChannel}>!`));
+
+	if (message.channel.id != '808733537984970773' && message.channel.id != config.chatBotChannel) return runCommand();
+
+	if (message.channel.id == '808733537984970773') {
 		if (message.content.startsWith(prefix) && !message.content.startsWith(`${prefix}suggest`)) return runCommand();
 		if (message.author.bot) return;
 
@@ -113,7 +130,7 @@ module.exports = (Discord, client, message) => {
 		channel.send(embed).then((msg) => {
 			msg.react('👍').then(() => msg.react('👎'));
 		});
-	}
+	} else if (message.channel.id == config.chatBotChannel) return chatBot();
 };
 
 module.exports.statusMessages = statusMessages;

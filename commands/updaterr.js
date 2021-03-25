@@ -15,8 +15,8 @@ module.exports = {
 			let fields = [];
 			for (i in roleData) {
 				fields.push({
-					name: String.fromCharCode(8203),
-					value: `${roleData[i].emoji} - <@&${roleData[i].role}>`,
+					name: roleData[i].emoji,
+					value: `<@&${roleData[i].role}>\n${roleData[i].description}`,
 					inline: true
 				});
 
@@ -26,10 +26,11 @@ module.exports = {
 					description: 'Choose when you want to be notified.',
 					fields: fields
 				};
-				client.channels.cache
-					.get(roleChannelID)
-					.messages.fetch({ limit: 1 })
-					.then((messages) => messages.last().edit({ embed: embed }));
+				client.channels.cache.get(roleChannelID).messages.fetch({ limit: 1 }).then((messages) => {
+					messages.last().edit({ embed: embed }).then((msg) => {
+						roles.forEach((role) => msg.react(role.emoji));
+					});
+				});
 				// .send({ embed: embed })
 				// .then((message) => message.react('📢'));
 			}

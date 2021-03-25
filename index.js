@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Octokit } = require('@octokit/core');
 const Discord = require('discord.js');
+const Trello = require('trello');
 
 const client = new Discord.Client({
 	ws: { intents: Discord.Intents.ALL },
@@ -25,6 +26,8 @@ const TRELLOAPPKEY = process.env.TRELLOAPPKEY;
 const TRELLOTOKEN = process.env.TRELLOTOKEN;
 module.exports.TRELLOAPPKEY = TRELLOAPPKEY;
 module.exports.TRELLOTOKEN = TRELLOTOKEN;
+var trello = new Trello(TRELLOAPPKEY, TRELLOTOKEN);
+module.exports.TRELLO = trello;
 
 const handlers = [ 'commandHandler', 'eventHandler' ];
 
@@ -108,18 +111,16 @@ client.on('messageReactionAdd', async (reaction, user) => {
 			.setAuthor(oldEmbed.author.name, oldEmbed.author.iconURL)
 			.setDescription(oldEmbed.description)
 			.setColor(newStatus.color)
-			.addField('Status', newStatus.text)
+			.addField('Status', newStatus.text, true)
+			.addField('Type', oldEmbed.fields[1].value, true)
 			.setFooter(oldEmbed.footer.text, oldEmbed.footer.iconURL);
 
 		if (oldEmbed.image != null) newEmbed.setImage(oldEmbed.image.url);
 
-		// if embed has bot icon in footer
 		// gh auto issue
 		if (
-			oldEmbed.footer.iconURL ==
-				'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png' &&
-			(newStatus == statusMessages.ACCEPTED || newStatus == statusMessages.ACCEPTEDSPECIAL) &&
-			!oldEmbed.description.includes('[GitHub Issue]')
+			(oldEmbed.fields[1].value.toLowerCase().includes('bot') && newStatus == statusMessages.ACCEPTED) ||
+			(newStatus == statusMessages.ACCEPTEDSPECIAL && !oldEmbed.description.includes('[GitHub Issue]'))
 		) {
 			let body = newEmbed.description;
 			if (oldEmbed.image != null) body = body.concat(`\n\n![](${oldEmbed.image.url})`);
@@ -158,6 +159,40 @@ client.on('messageReactionAdd', async (reaction, user) => {
 			} catch (error) {
 				console.error(error);
 			}
+		}
+		if (
+			(oldEmbed.fields[1].value.toLowerCase().includes('client') && newStatus == statusMessages.ACCEPTED) ||
+			newStatus == statusMessages.ACCEPTEDSPECIAL
+		) {
+			let title;
+			let titleArr = newEmbed.description.split(/ +/);
+
+			if (titleArr.length >= 5) {
+				title = `${titleArr[0]} ${titleArr[1]} ${titleArr[2]} ${titleArr[3]} ${titleArr[4]}`;
+			} else {
+				title = titleArr.join(' ');
+			}
+
+			if (oldEmbed.image != null) body = body.concat(`\n\n![](${oldEmbed.image.url})`);
+			let description = oldEmbed.description;
+			description.concat(
+				`\n\n> This issue was created by an automation. It was authored in Discord by ${oldEmbed.author
+					.name} and accepted by ${user.username}, in the Harvest Client server.`
+			);
+
+			await trello.addCard(
+				title,
+				description,
+				oldEmbed.fields[1].value.toLowerCase().includes('bug')
+					? '5ff4536a0b827785fb4b0a4a'
+					: '5ff1b43587fe6b0ae9058960',
+				function(error, card) {
+					if (error) {
+						console.log(error);
+						return message.reply('There was an error adding that card!');
+					}
+				}
+			);
 		}
 		// edit message to have new embed
 		message.edit({ embed: newEmbed });
