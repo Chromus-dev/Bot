@@ -7,16 +7,16 @@
 	{
 		"role": "821073136090218536",
 		"emoji": "👀",
-		"description": "Sneak peaks for client features"
+		"description": "Get notified whenever we post a sneak peek!"
 	},
 	{
 		"role": "819888601751093249",
 		"emoji": "💻",
-		"description": "Look at GitHub updates"
+		"description": "Access to our GitHub repository history."
 	},
 	{
 		"role": "819888399330574376",
 		"emoji": "🗣️",
-		"description": "Access to off-topic chat"
+		"description": "Access to off-topic channels."
 	}
 ]
